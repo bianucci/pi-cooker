@@ -7,7 +7,7 @@
     This example lights the OK LED and then loops infinitely
 */
 
-#include <unistd.h>
+#include "systimer.h"
 
  
 /** The base address of the GPIO peripheral (ARM Physical Address) */
@@ -60,6 +60,24 @@ volatile unsigned int* gpio;
 /** Simple loop variable */
 volatile unsigned int tim;
 
+static rpi_sys_timer_t* rpiSystemTimer = (rpi_sys_timer_t*)RPI_SYSTIMER_BASE;
+
+void sleepMicros( unsigned int us )
+{
+    volatile unsigned int ts = rpiSystemTimer->counter_lo;
+
+    while( ( rpiSystemTimer->counter_lo - ts ) < us )
+    {
+        /* BLANK */
+    }
+}
+
+void sleepSeconds( unsigned int us )
+{
+    sleepMicros(us*1000*1000);
+}
+
+
 /** Main function - we'll never return from here */
 int notmain(void)
 {
@@ -80,15 +98,12 @@ int notmain(void)
            the output level of GPIO16 as 0 (logic low) */
         gpio[GPIO_GPCLR0] = (1 << 4);
 
-        sleep(1);
-
-        for(tim = 0; tim < 1000000; tim++)
-           ;
+        sleepSeconds(1);
         
         /* Set the GPIO16 output high ( Turn OK LED off )*/
         gpio[GPIO_GPSET0] = (1 << 4);
 
-        for(tim = 0; tim < 1000000; tim++)
-           ;
+        sleepSeconds(1);
+
     }
 }
