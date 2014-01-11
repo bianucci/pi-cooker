@@ -6,7 +6,7 @@ Disassembly of section .text:
 
 00008000 <_start>:
     8000:	e3a0d902 	mov	sp, #32768	; 0x8000
-    8004:	eb000021 	bl	8090 <notmain>
+    8004:	eb000030 	bl	80cc <notmain>
 
 00008008 <hang>:
     8008:	eafffffe 	b	8008 <hang>
@@ -36,66 +36,69 @@ Disassembly of section .text:
     8048:	e12fff1e 	bx	lr
     804c:	20003000 	andcs	r3, r0, r0
 
-00008050 <sleepSeconds>:
-    8050:	e59f1034 	ldr	r1, [pc, #52]	; 808c <sleepSeconds+0x3c>
-    8054:	e0603280 	rsb	r3, r0, r0, lsl #5
-    8058:	e5912004 	ldr	r2, [r1, #4]
-    805c:	e24dd008 	sub	sp, sp, #8
-    8060:	e0633303 	rsb	r3, r3, r3, lsl #6
-    8064:	e0800183 	add	r0, r0, r3, lsl #3
-    8068:	e58d2004 	str	r2, [sp, #4]
-    806c:	e1a00300 	lsl	r0, r0, #6
-    8070:	e5912004 	ldr	r2, [r1, #4]
-    8074:	e59d3004 	ldr	r3, [sp, #4]
-    8078:	e0633002 	rsb	r3, r3, r2
-    807c:	e1500003 	cmp	r0, r3
-    8080:	8afffffa 	bhi	8070 <sleepSeconds+0x20>
-    8084:	e28dd008 	add	sp, sp, #8
-    8088:	e12fff1e 	bx	lr
-    808c:	20003000 	andcs	r3, r0, r0
+00008050 <sleepMillis>:
+    8050:	e59f1030 	ldr	r1, [pc, #48]	; 8088 <sleepMillis+0x38>
+    8054:	e5913004 	ldr	r3, [r1, #4]
+    8058:	e24dd008 	sub	sp, sp, #8
+    805c:	e0602280 	rsb	r2, r0, r0, lsl #5
+    8060:	e0800102 	add	r0, r0, r2, lsl #2
+    8064:	e58d3004 	str	r3, [sp, #4]
+    8068:	e1a00180 	lsl	r0, r0, #3
+    806c:	e5912004 	ldr	r2, [r1, #4]
+    8070:	e59d3004 	ldr	r3, [sp, #4]
+    8074:	e0633002 	rsb	r3, r3, r2
+    8078:	e1500003 	cmp	r0, r3
+    807c:	8afffffa 	bhi	806c <sleepMillis+0x1c>
+    8080:	e28dd008 	add	sp, sp, #8
+    8084:	e12fff1e 	bx	lr
+    8088:	20003000 	andcs	r3, r0, r0
 
-00008090 <notmain>:
-    8090:	e52de004 	push	{lr}		; (str lr, [sp, #-4]!)
-    8094:	e59fe068 	ldr	lr, [pc, #104]	; 8104 <notmain+0x74>
-    8098:	e59e3000 	ldr	r3, [lr]
-    809c:	e59f2064 	ldr	r2, [pc, #100]	; 8108 <notmain+0x78>
-    80a0:	e3833a01 	orr	r3, r3, #4096	; 0x1000
-    80a4:	e582e000 	str	lr, [r2]
-    80a8:	e59f105c 	ldr	r1, [pc, #92]	; 810c <notmain+0x7c>
-    80ac:	e58e3000 	str	r3, [lr]
-    80b0:	e59f0058 	ldr	r0, [pc, #88]	; 8110 <notmain+0x80>
-    80b4:	e24dd00c 	sub	sp, sp, #12
-    80b8:	e3a0c010 	mov	ip, #16
-    80bc:	e58ec028 	str	ip, [lr, #40]	; 0x28
-    80c0:	e5913004 	ldr	r3, [r1, #4]
-    80c4:	e58d3000 	str	r3, [sp]
-    80c8:	e5912004 	ldr	r2, [r1, #4]
-    80cc:	e59d3000 	ldr	r3, [sp]
-    80d0:	e0633002 	rsb	r3, r3, r2
-    80d4:	e1530000 	cmp	r3, r0
-    80d8:	9afffffa 	bls	80c8 <notmain+0x38>
-    80dc:	e58ec01c 	str	ip, [lr, #28]
-    80e0:	e59f3024 	ldr	r3, [pc, #36]	; 810c <notmain+0x7c>
-    80e4:	e5933004 	ldr	r3, [r3, #4]
-    80e8:	e58d3004 	str	r3, [sp, #4]
-    80ec:	e5912004 	ldr	r2, [r1, #4]
-    80f0:	e59d3004 	ldr	r3, [sp, #4]
-    80f4:	e0633002 	rsb	r3, r3, r2
-    80f8:	e1530000 	cmp	r3, r0
-    80fc:	9afffffa 	bls	80ec <notmain+0x5c>
-    8100:	eaffffed 	b	80bc <notmain+0x2c>
-    8104:	20200000 	eorcs	r0, r0, r0
-    8108:	00008118 	andeq	r8, r0, r8, lsl r1
-    810c:	20003000 	andcs	r3, r0, r0
-    8110:	000f423f 	andeq	r4, pc, pc, lsr r2	; <UNPREDICTABLE>
+0000808c <sleepSeconds>:
+    808c:	e59f1034 	ldr	r1, [pc, #52]	; 80c8 <sleepSeconds+0x3c>
+    8090:	e0603280 	rsb	r3, r0, r0, lsl #5
+    8094:	e5912004 	ldr	r2, [r1, #4]
+    8098:	e24dd008 	sub	sp, sp, #8
+    809c:	e0633303 	rsb	r3, r3, r3, lsl #6
+    80a0:	e0800183 	add	r0, r0, r3, lsl #3
+    80a4:	e58d2004 	str	r2, [sp, #4]
+    80a8:	e1a00300 	lsl	r0, r0, #6
+    80ac:	e5912004 	ldr	r2, [r1, #4]
+    80b0:	e59d3004 	ldr	r3, [sp, #4]
+    80b4:	e0633002 	rsb	r3, r3, r2
+    80b8:	e1500003 	cmp	r0, r3
+    80bc:	8afffffa 	bhi	80ac <sleepSeconds+0x20>
+    80c0:	e28dd008 	add	sp, sp, #8
+    80c4:	e12fff1e 	bx	lr
+    80c8:	20003000 	andcs	r3, r0, r0
+
+000080cc <notmain>:
+    80cc:	e92d4038 	push	{r3, r4, r5, lr}
+    80d0:	e59f3038 	ldr	r3, [pc, #56]	; 8110 <notmain+0x44>
+    80d4:	e5932000 	ldr	r2, [r3]
+    80d8:	e59f4034 	ldr	r4, [pc, #52]	; 8114 <notmain+0x48>
+    80dc:	e3822a01 	orr	r2, r2, #4096	; 0x1000
+    80e0:	e5843000 	str	r3, [r4]
+    80e4:	e5832000 	str	r2, [r3]
+    80e8:	e3a05010 	mov	r5, #16
+    80ec:	e5835028 	str	r5, [r3, #40]	; 0x28
+    80f0:	e3a00001 	mov	r0, #1
+    80f4:	ebffffe4 	bl	808c <sleepSeconds>
+    80f8:	e5943000 	ldr	r3, [r4]
+    80fc:	e3a00001 	mov	r0, #1
+    8100:	e583501c 	str	r5, [r3, #28]
+    8104:	ebffffe0 	bl	808c <sleepSeconds>
+    8108:	e5943000 	ldr	r3, [r4]
+    810c:	eafffff6 	b	80ec <notmain+0x20>
+    8110:	20200000 	eorcs	r0, r0, r0
+    8114:	0000811c 	andeq	r8, r0, ip, lsl r1
 
 Disassembly of section .bss:
 
-00008114 <tim>:
-    8114:	00000000 	andeq	r0, r0, r0
-
-00008118 <gpio>:
+00008118 <tim>:
     8118:	00000000 	andeq	r0, r0, r0
+
+0000811c <gpio>:
+    811c:	00000000 	andeq	r0, r0, r0
 
 Disassembly of section .ARM.attributes:
 
@@ -116,7 +119,7 @@ Disassembly of section .ARM.attributes:
 Disassembly of section .comment:
 
 00000000 <.comment>:
-   0:	3a434347 	bcc	10d0d24 <gpio+0x10c8c0c>
+   0:	3a434347 	bcc	10d0d24 <gpio+0x10c8c08>
    4:	4e472820 	cdpmi	8, 4, cr2, cr7, cr0, {1}
    8:	34202955 	strtcc	r2, [r0], #-2389	; 0x955
    c:	322e372e 	eorcc	r3, lr, #12058624	; 0xb80000

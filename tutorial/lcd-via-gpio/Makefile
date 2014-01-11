@@ -26,8 +26,11 @@ vectors.o : vectors.s
 blinker01.o : blinker01.c
 	$(ARMGNU)-gcc $(COPS) -c blinker01.c -o blinker01.o
 
-blinker01.elf : memmap vectors.o blinker01.o 
-	$(ARMGNU)-ld vectors.o blinker01.o -T memmap -o blinker01.elf
+lib.o : lib.c
+	$(ARMGNU)-gcc $(COPS) -c lib.c -o lib.o
+
+blinker01.elf : memmap vectors.o blinker01.o lib.o
+	$(ARMGNU)-ld vectors.o lib.o blinker01.o -T memmap -o blinker01.elf
 	$(ARMGNU)-objdump -D blinker01.elf > blinker01.list
 
 blinker01.bin : blinker01.elf
@@ -48,7 +51,7 @@ LLCOPS1 = -march=arm -mcpu=arm1176jzf-s
 COPS = -Wall  -O2 -nostdlib -nostartfiles -ffreestanding
 OOPS = -std-compile-opts
 
-clang : blinker01.clang.hex blinker01.clang.bin
+clang : blinker01.clang.hex blinker01.clang.bin 
 
 
 blinker01.clang.bc : blinker01.c
