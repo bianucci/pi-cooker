@@ -1,0 +1,2 @@
+http://raspberryalphaomega.org.uk/2013/06/23/reading-analogue-data-on-a-raspberry-pi-using-mcp3002/
+http://raspberryalphaomega.org.uk/2013/06/24/using-the-bcm2835-c-library-for-spi/
