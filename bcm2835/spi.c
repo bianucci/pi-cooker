@@ -1,5 +1,8 @@
 #include "bcm2835.h"
 
+int transform_to_char_array(char *int_as_char, int i);
+int shift(char* int_as_char, int length);
+
 int notmain(void)
 {
     	uint32_t data1 = 'c';
@@ -38,3 +41,24 @@ int notmain(void)
 	return 0;
 }
 
+int transform_to_char_array(char *int_as_char, int i){
+	int mod_result = -1;
+	int counter = 0;
+	while (mod_result != 0){
+		mod_result = i%10;
+		if (mod_result!=0){
+			int_as_char[counter] = mod_result;
+			i = i / 10;
+			counter++;
+		}		 
+	}
+	shift(int_as_char, counter);
+	return counter;	
+}
+
+int shift(char* int_as_char, int length){
+	for(int i = 0;i < length;i++){		
+		int_as_char[i] = int_as_char[i] + 48;
+	}	
+	return 0;
+}
