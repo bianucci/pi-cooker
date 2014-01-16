@@ -5,13 +5,13 @@ int shift(char* int_as_char, int length);
 
 int notmain(void)
 {
-	uint32_t data = 'c';
-    	uint32_t data1 = 'c';
-    	uint32_t data2 = 'c';
-	uint32_t space = ' ';
+	uint32_t data = 0;
+    uint32_t data1 = 0;
+    uint32_t data2 = 0;
+	uint32_t space = '-';
 
 
-	char message[10]; 
+	char message[10];
 	int length;
 
 	bcm2835_uart_begin();
@@ -30,55 +30,53 @@ int notmain(void)
 
 		bcm2835_spi_transfernb(mosi, miso, 2);
 		
-		data1 = (0 | miso[0]);
-		data2 = (0 | miso[1]);
+		/*data1 = ((miso[0]&0x0f)<<8);
+		data2 = miso[1];
+        data = data1 + data2;*/
 		
-		data = miso[1] + ((miso[0] & 3) << 8);
+        
+		//data = miso[1] + ((miso[0] & 15) << 8);
 	
-		length = transform_to_char_array(message, data);
+		length = transform_to_char_array(message, miso[0]);
 
 		int i;
 		for(i=length-1;i>=0;i--){
-			bcm2835_uart_send('l');
-			bcm2835_uart_send(':');
-			bcm2835_uart_send(length + 48);
-			bcm2835_uart_send(space);
-			bcm2835_uart_send('v');
-			bcm2835_uart_send(':');
 			bcm2835_uart_send(message[i]);
-		}			
+		}
+        bcm2835_uart_send(space);
 
+        length = transform_to_char_array(message, miso[1]);
+        
+		for(i=length-1;i>=0;i--){
+			bcm2835_uart_send(message[i]);
+		}
+        bcm2835_uart_send(space);
+        
 		bcm2835_spi_end();
-	
-		//bcm2835_uart_send(data1);
-		//bcm2835_uart_send(data2);
-		bcm2835_uart_send(space);
-
 
 		bcm2835_delayMicroseconds(1000000);
 	}
 	return 0;
 }
 
-int transform_to_char_array(char *int_as_char, int i){
-	int mod_result = -1;
-	int counter = 0;
-	while (mod_result != 0){
-		mod_result = i%10;
-		if (mod_result!=0){
-			int_as_char[counter] = mod_result;
-			i = i / 10;
-			counter++;
-		}		 
+int shift(char* int_as_char, int length){
+    int i;
+    for(i = 0;i < length;i++){
+		int_as_char[i] = int_as_char[i] + 48;
 	}
-	shift(int_as_char, counter);
-	return counter;	
+	return 0;
 }
 
-int shift(char* int_as_char, int length){
-	int i;
-	for(i = 0;i < length;i++){		
-		int_as_char[i] = int_as_char[i] + 48;
-	}	
-	return 0;
+int transform_to_char_array(char *int_as_char, int i){
+    
+	int mod_result = -1;
+	int counter = 0;
+	do {
+		mod_result = i%10;
+		int_as_char[counter] = mod_result;
+		i = i / 10;
+		counter++;
+	}while(i!=0);
+	shift(int_as_char, counter);
+	return counter;
 }
