@@ -5,7 +5,9 @@ COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding
 
 LIB = -L /opt/gnuarm/arm-none-eabi/lib/ -L/Applications/yagarto-4.7.2/lib/gcc/arm-none-eabi/4.7.2
 
-gcc : bcm2835.hex bcm2835.bin
+NOTMAIN = blink
+
+gcc : $(NOTMAIN).hex $(NOTMAIN).bin
 
 all : gcc clang
 
@@ -28,15 +30,18 @@ bcm2835.o : bcm2835.c
 bcm2835_asm.o : bcm2835_asm.S
 	$(ARMGNU)-gcc $(COPS) bcm2835_asm.S -D__ASSEMBLY__ -c -o bcm2835_asm.o
 
-bcm2835.elf : memmap vectors.o bcm2835.o bcm2835_asm.o
-	$(ARMGNU)-ld vectors.o bcm2835.o bcm2835_asm.o -T memmap -o bcm2835.elf $(LIB) -lc -lgcc
-	$(ARMGNU)-objdump -D bcm2835.elf > bcm2835.list
+$(NOTMAIN).o : $(NOTMAIN).c
+	$(ARMGNU)-gcc $(COPS) -c  $(NOTMAIN).c -o $(NOTMAIN).o
 
-bcm2835.bin : bcm2835.elf
-	$(ARMGNU)-objcopy bcm2835.elf -O binary bcm2835.bin
+$(NOTMAIN).elf : memmap vectors.o bcm2835.o bcm2835_asm.o $(NOTMAIN).o
+	$(ARMGNU)-ld vectors.o bcm2835.o bcm2835_asm.o $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc
+	$(ARMGNU)-objdump -D $(NOTMAIN).elf > $(NOTMAIN).list
 
-bcm2835.hex : bcm2835.elf
-	$(ARMGNU)-objcopy bcm2835.elf -O ihex bcm2835.hex
+$(NOTMAIN).bin : $(NOTMAIN).elf
+	$(ARMGNU)-objcopy $(NOTMAIN).elf -O binary $(NOTMAIN).bin
+
+$(NOTMAIN).hex : $(NOTMAIN).elf
+	$(ARMGNU)-objcopy $(NOTMAIN).elf -O ihex $(NOTMAIN).hex
 
 
 LOPS = -Wall -m32 -emit-llvm
@@ -46,20 +51,20 @@ LLCOPS1 = -march=arm -mcpu=arm1176jzf-s
 COPS = -Wall  -O2 -nostdlib -nostartfiles -ffreestanding
 OOPS = -std-compile-opts
 
-clang : bcm2835.clang.hex bcm2835.clang.bin
+clang : $(NOTMAIN).clang.hex $(NOTMAIN).clang.bin
 
-bcm2835.clang.bc : bcm2835.c
-	clang $(LOPS) -c bcm2835.c -o bcm2835.clang.bc
+$(NOTMAIN).clang.bc : $(NOTMAIN).c
+	clang $(LOPS) -c $(NOTMAIN).c -o $(NOTMAIN).clang.bc
 
-bcm2835.clang.opt.elf : memmap vectors.o bcm2835.clang.bc
-	opt $(OOPS) bcm2835.clang.bc -o bcm2835.clang.opt.bc
-	llc $(LLCOPS) bcm2835.clang.opt.bc -o bcm2835.clang.opt.s
-	$(ARMGNU)-as bcm2835.clang.opt.s -o bcm2835.clang.opt.o
-	$(ARMGNU)-ld -o bcm2835.clang.opt.elf -T memmap vectors.o bcm2835.clang.opt.o
-	$(ARMGNU)-objdump -D bcm2835.clang.opt.elf > bcm2835.clang.opt.list
+$(NOTMAIN).clang.opt.elf : memmap vectors.o $(NOTMAIN).clang.bc
+	opt $(OOPS) $(NOTMAIN).clang.bc -o $(NOTMAIN).clang.opt.bc
+	llc $(LLCOPS) $(NOTMAIN).clang.opt.bc -o $(NOTMAIN).clang.opt.s
+	$(ARMGNU)-as $(NOTMAIN).clang.opt.s -o $(NOTMAIN).clang.opt.o
+	$(ARMGNU)-ld -o $(NOTMAIN).clang.opt.elf -T memmap vectors.o $(NOTMAIN).clang.opt.o
+	$(ARMGNU)-objdump -D $(NOTMAIN).clang.opt.elf > $(NOTMAIN).clang.opt.list
 
-bcm2835.clang.hex : bcm2835.clang.opt.elf
-	$(ARMGNU)-objcopy bcm2835.clang.opt.elf bcm2835.clang.hex -O ihex
+$(NOTMAIN).clang.hex : $(NOTMAIN).clang.opt.elf
+	$(ARMGNU)-objcopy $(NOTMAIN).clang.opt.elf $(NOTMAIN).clang.hex -O ihex
 
-bcm2835.clang.bin : bcm2835.clang.opt.elf
-	$(ARMGNU)-objcopy bcm2835.clang.opt.elf bcm2835.clang.bin -O binary
+$(NOTMAIN).clang.bin : $(NOTMAIN).clang.opt.elf
+	$(ARMGNU)-objcopy $(NOTMAIN).clang.opt.elf $(NOTMAIN).clang.bin -O binary

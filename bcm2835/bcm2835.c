@@ -355,5 +355,3 @@ void inline bcm2835_uart_send(uint32_t c) {
 		;
 	BCM2835_UART1 ->IO = c;
 }
-
-}

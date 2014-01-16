@@ -1,4 +1,4 @@
-#include "bcm2835.c"
+#include "bcm2835.h"
 
 int notmain(void){
 	uint8_t pin;
