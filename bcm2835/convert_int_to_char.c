@@ -1,13 +1,10 @@
 #include <stdio.h> 
 
 int main(){
-	int i = 433;
-	
-	char int_as_char[10];
 
-	printf("Length is %d\n", transform_to_char_array(int_as_char, i));
+	int i = 3 << 8;
+	printf("%d\n", i);
 
-	printf("%s\n", int_as_char);
 }
 
 int shift_wtf(char* int_as_char, int length){

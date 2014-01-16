@@ -39,6 +39,12 @@ int notmain(void)
 
 		int i;
 		for(i=length-1;i>=0;i--){
+			bcm2835_uart_send('l');
+			bcm2835_uart_send(':');
+			bcm2835_uart_send(length + 48);
+			bcm2835_uart_send(space);
+			bcm2835_uart_send('v');
+			bcm2835_uart_send(':');
 			bcm2835_uart_send(message[i]);
 		}			
 
