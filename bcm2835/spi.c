@@ -2,8 +2,10 @@
 
 int notmain(void)
 {
-    	uint32_t data = 'c';
-    
+    	uint32_t data1 = 'c';
+    	uint32_t data2 = 'c';
+	uint32_t space = ' ';
+
 	bcm2835_uart_begin();
     	
 	while(1){
@@ -17,16 +19,19 @@ int notmain(void)
 
 		char mosi[10] = { 0x60, 0x00 };
 		char miso[10] = { 0 };
-	
-		bcm2835_uart_send(data); 
 
 		bcm2835_spi_transfernb(mosi, miso, 2);
 		
-		data = miso[1] + ((miso[0] & 3) << 8);
+		data1 = (0 | miso[0]);
+		data2 = (0 | miso[1]);
+		
+		//data = miso[1] + ((miso[0] & 3) << 8);
 	
 		bcm2835_spi_end();
 	
-		bcm2835_uart_send(data);
+		bcm2835_uart_send(data1);
+		bcm2835_uart_send(data2);
+		bcm2835_uart_send(space);
 
 		bcm2835_delayMicroseconds(1000000);
 	}

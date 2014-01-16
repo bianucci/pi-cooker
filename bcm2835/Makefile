@@ -5,7 +5,7 @@ COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding
 
 LIB = -L /opt/gnuarm/arm-none-eabi/lib/ -L/Applications/yagarto-4.7.2/lib/gcc/arm-none-eabi/4.7.2
 
-NOTMAIN = blink
+NOTMAIN = spi
 
 gcc : $(NOTMAIN).hex $(NOTMAIN).bin
 
