@@ -1,0 +1,5 @@
+
+
+The pin level registers return the actual value of the pin. The LEV{n} field gives the value of the respective GPIO pin.
+
+The base address of this SPI0 interface is 0x7E204000.
