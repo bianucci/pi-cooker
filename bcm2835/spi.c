@@ -5,9 +5,14 @@ int shift(char* int_as_char, int length);
 
 int notmain(void)
 {
+	uint32_t data = 'c';
     	uint32_t data1 = 'c';
     	uint32_t data2 = 'c';
 	uint32_t space = ' ';
+
+
+	char message[10]; 
+	int length;
 
 	bcm2835_uart_begin();
     	
@@ -28,13 +33,21 @@ int notmain(void)
 		data1 = (0 | miso[0]);
 		data2 = (0 | miso[1]);
 		
-		//data = miso[1] + ((miso[0] & 3) << 8);
+		data = miso[1] + ((miso[0] & 3) << 8);
 	
+		length = transform_to_char_array(message, data);
+
+		int i;
+		for(i=0;i<length;i++){
+			bcm2835_uart_send(message[i]);
+		}			
+
 		bcm2835_spi_end();
 	
-		bcm2835_uart_send(data1);
-		bcm2835_uart_send(data2);
+		//bcm2835_uart_send(data1);
+		//bcm2835_uart_send(data2);
 		bcm2835_uart_send(space);
+
 
 		bcm2835_delayMicroseconds(1000000);
 	}
@@ -57,7 +70,8 @@ int transform_to_char_array(char *int_as_char, int i){
 }
 
 int shift(char* int_as_char, int length){
-	for(int i = 0;i < length;i++){		
+	int i;
+	for(i = 0;i < length;i++){		
 		int_as_char[i] = int_as_char[i] + 48;
 	}	
 	return 0;

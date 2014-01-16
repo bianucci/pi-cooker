@@ -6,7 +6,7 @@ Disassembly of section .text:
 
 00008000 <_start>:
     8000:	e3a0d902 	mov	sp, #32768	; 0x8000
-    8004:	eb00020c 	bl	883c <notmain>
+    8004:	eb000226 	bl	88a4 <notmain>
 
 00008008 <hang>:
     8008:	eafffffe 	b	8008 <hang>
@@ -609,54 +609,102 @@ Disassembly of section .text:
     8834:	20003000 	andcs	r3, r0, r0
     8838:	20204000 	eorcs	r4, r0, r0
 
-0000883c <notmain>:
-    883c:	e92d45f0 	push	{r4, r5, r6, r7, r8, sl, lr}
-    8840:	e24dd01c 	sub	sp, sp, #28
-    8844:	ebffff89 	bl	8670 <bcm2835_uart_begin>
-    8848:	e1a0600d 	mov	r6, sp
-    884c:	e28d500c 	add	r5, sp, #12
-    8850:	e3a04000 	mov	r4, #0
-    8854:	e3a0a060 	mov	sl, #96	; 0x60
-    8858:	e1a0700d 	mov	r7, sp
-    885c:	ebfffe38 	bl	8144 <bcm2835_spi_begin>
-    8860:	e3a00001 	mov	r0, #1
-    8864:	ebfffe60 	bl	81ec <bcm2835_spi_setBitOrder>
-    8868:	e3a00000 	mov	r0, #0
-    886c:	ebfffe63 	bl	8200 <bcm2835_spi_setDataMode>
-    8870:	e3a00040 	mov	r0, #64	; 0x40
-    8874:	ebfffe5d 	bl	81f0 <bcm2835_spi_setClockDivider>
-    8878:	e3a00000 	mov	r0, #0
-    887c:	ebfffe68 	bl	8224 <bcm2835_spi_chipSelect>
-    8880:	e3a00000 	mov	r0, #0
-    8884:	e1a01000 	mov	r1, r0
-    8888:	ebfffe6d 	bl	8244 <bcm2835_spi_setChipSelectPolarity>
-    888c:	e5854000 	str	r4, [r5]
-    8890:	e28d500c 	add	r5, sp, #12
-    8894:	e1a01005 	mov	r1, r5
-    8898:	e3a02002 	mov	r2, #2
-    889c:	e1a0000d 	mov	r0, sp
-    88a0:	e5864000 	str	r4, [r6]
-    88a4:	e58d4004 	str	r4, [sp, #4]
-    88a8:	e1cd40b8 	strh	r4, [sp, #8]
-    88ac:	e5cda000 	strb	sl, [sp]
-    88b0:	e58d4010 	str	r4, [sp, #16]
-    88b4:	e1cd41b4 	strh	r4, [sp, #20]
-    88b8:	ebfffe6d 	bl	8274 <bcm2835_spi_transfernb>
-    88bc:	e5dd800c 	ldrb	r8, [sp, #12]
-    88c0:	e5dd600d 	ldrb	r6, [sp, #13]
-    88c4:	ebfffe36 	bl	81a4 <bcm2835_spi_end>
-    88c8:	e1a00008 	mov	r0, r8
-    88cc:	ebffff9c 	bl	8744 <bcm2835_uart_send>
-    88d0:	e1a00006 	mov	r0, r6
-    88d4:	ebffff9a 	bl	8744 <bcm2835_uart_send>
-    88d8:	e3a00020 	mov	r0, #32
-    88dc:	ebffff98 	bl	8744 <bcm2835_uart_send>
-    88e0:	e59f000c 	ldr	r0, [pc, #12]	; 88f4 <notmain+0xb8>
-    88e4:	e3a01000 	mov	r1, #0
-    88e8:	e1a06007 	mov	r6, r7
-    88ec:	ebfffdeb 	bl	80a0 <bcm2835_delayMicroseconds>
-    88f0:	eaffffd9 	b	885c <notmain+0x20>
-    88f4:	000f4240 	andeq	r4, pc, r0, asr #4
+0000883c <transform_to_char_array>:
+    883c:	e52d4004 	push	{r4}		; (str r4, [sp, #-4]!)
+    8840:	e59f4058 	ldr	r4, [pc, #88]	; 88a0 <transform_to_char_array+0x64>
+    8844:	e1a03000 	mov	r3, r0
+    8848:	e3a00000 	mov	r0, #0
+    884c:	e0cc2194 	smull	r2, ip, r4, r1
+    8850:	e1a02fc1 	asr	r2, r1, #31
+    8854:	e062c14c 	rsb	ip, r2, ip, asr #2
+    8858:	e1a0200c 	mov	r2, ip
+    885c:	e08cc10c 	add	ip, ip, ip, lsl #2
+    8860:	e051c08c 	subs	ip, r1, ip, lsl #1
+    8864:	1a000009 	bne	8890 <transform_to_char_array+0x54>
+    8868:	e3500000 	cmp	r0, #0
+    886c:	0a000005 	beq	8888 <transform_to_char_array+0x4c>
+    8870:	e0831000 	add	r1, r3, r0
+    8874:	e5d32000 	ldrb	r2, [r3]
+    8878:	e2822030 	add	r2, r2, #48	; 0x30
+    887c:	e4c32001 	strb	r2, [r3], #1
+    8880:	e1530001 	cmp	r3, r1
+    8884:	1afffffa 	bne	8874 <transform_to_char_array+0x38>
+    8888:	e8bd0010 	ldmfd	sp!, {r4}
+    888c:	e12fff1e 	bx	lr
+    8890:	e7c3c000 	strb	ip, [r3, r0]
+    8894:	e1a01002 	mov	r1, r2
+    8898:	e2800001 	add	r0, r0, #1
+    889c:	eaffffea 	b	884c <transform_to_char_array+0x10>
+    88a0:	66666667 	strbtvs	r6, [r6], -r7, ror #12
+
+000088a4 <notmain>:
+    88a4:	e92d47f0 	push	{r4, r5, r6, r7, r8, r9, sl, lr}
+    88a8:	e24dd028 	sub	sp, sp, #40	; 0x28
+    88ac:	ebffff6f 	bl	8670 <bcm2835_uart_begin>
+    88b0:	e28d8010 	add	r8, sp, #16
+    88b4:	e28d701c 	add	r7, sp, #28
+    88b8:	e3a06000 	mov	r6, #0
+    88bc:	e3a09060 	mov	r9, #96	; 0x60
+    88c0:	e1a0a008 	mov	sl, r8
+    88c4:	ebfffe1e 	bl	8144 <bcm2835_spi_begin>
+    88c8:	e3a00001 	mov	r0, #1
+    88cc:	ebfffe46 	bl	81ec <bcm2835_spi_setBitOrder>
+    88d0:	e3a00000 	mov	r0, #0
+    88d4:	ebfffe49 	bl	8200 <bcm2835_spi_setDataMode>
+    88d8:	e3a00040 	mov	r0, #64	; 0x40
+    88dc:	ebfffe43 	bl	81f0 <bcm2835_spi_setClockDivider>
+    88e0:	e3a00000 	mov	r0, #0
+    88e4:	ebfffe4e 	bl	8224 <bcm2835_spi_chipSelect>
+    88e8:	e3a00000 	mov	r0, #0
+    88ec:	e1a01000 	mov	r1, r0
+    88f0:	ebfffe53 	bl	8244 <bcm2835_spi_setChipSelectPolarity>
+    88f4:	e5876000 	str	r6, [r7]
+    88f8:	e28d701c 	add	r7, sp, #28
+    88fc:	e1a0000a 	mov	r0, sl
+    8900:	e1a01007 	mov	r1, r7
+    8904:	e3a02002 	mov	r2, #2
+    8908:	e5886000 	str	r6, [r8]
+    890c:	e58d6014 	str	r6, [sp, #20]
+    8910:	e1cd61b8 	strh	r6, [sp, #24]
+    8914:	e5cd9010 	strb	r9, [sp, #16]
+    8918:	e58d6020 	str	r6, [sp, #32]
+    891c:	e1cd62b4 	strh	r6, [sp, #36]	; 0x24
+    8920:	ebfffe53 	bl	8274 <bcm2835_spi_transfernb>
+    8924:	e5dd101c 	ldrb	r1, [sp, #28]
+    8928:	e5dd301d 	ldrb	r3, [sp, #29]
+    892c:	e2011003 	and	r1, r1, #3
+    8930:	e28d0004 	add	r0, sp, #4
+    8934:	e0831401 	add	r1, r3, r1, lsl #8
+    8938:	ebffffbf 	bl	883c <transform_to_char_array>
+    893c:	e3500000 	cmp	r0, #0
+    8940:	c28d4003 	addgt	r4, sp, #3
+    8944:	e1a0800a 	mov	r8, sl
+    8948:	c0845000 	addgt	r5, r4, r0
+    894c:	da000003 	ble	8960 <notmain+0xbc>
+    8950:	e5f40001 	ldrb	r0, [r4, #1]!
+    8954:	ebffff7a 	bl	8744 <bcm2835_uart_send>
+    8958:	e1540005 	cmp	r4, r5
+    895c:	1afffffb 	bne	8950 <notmain+0xac>
+    8960:	ebfffe0f 	bl	81a4 <bcm2835_spi_end>
+    8964:	e3a00020 	mov	r0, #32
+    8968:	ebffff75 	bl	8744 <bcm2835_uart_send>
+    896c:	e59f0008 	ldr	r0, [pc, #8]	; 897c <notmain+0xd8>
+    8970:	e3a01000 	mov	r1, #0
+    8974:	ebfffdc9 	bl	80a0 <bcm2835_delayMicroseconds>
+    8978:	eaffffd1 	b	88c4 <notmain+0x20>
+    897c:	000f4240 	andeq	r4, pc, r0, asr #4
+
+00008980 <shift>:
+    8980:	e3510000 	cmp	r1, #0
+    8984:	da000005 	ble	89a0 <shift+0x20>
+    8988:	e0802001 	add	r2, r0, r1
+    898c:	e5d03000 	ldrb	r3, [r0]
+    8990:	e2833030 	add	r3, r3, #48	; 0x30
+    8994:	e4c03001 	strb	r3, [r0], #1
+    8998:	e1500002 	cmp	r0, r2
+    899c:	1afffffa 	bne	898c <shift+0xc>
+    89a0:	e3a00000 	mov	r0, #0
+    89a4:	e12fff1e 	bx	lr
 
 Disassembly of section .ARM.attributes:
 
@@ -678,7 +726,7 @@ Disassembly of section .ARM.attributes:
 Disassembly of section .comment:
 
 00000000 <.comment>:
-   0:	3a434347 	bcc	10d0d24 <notmain+0x10c84e8>
+   0:	3a434347 	bcc	10d0d24 <shift+0x10c83a4>
    4:	4e472820 	cdpmi	8, 4, cr2, cr7, cr0, {1}
    8:	34202955 	strtcc	r2, [r0], #-2389	; 0x955
    c:	322e372e 	eorcc	r3, lr, #12058624	; 0xb80000
