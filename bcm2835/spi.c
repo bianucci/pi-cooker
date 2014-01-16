@@ -38,7 +38,7 @@ int notmain(void)
 		length = transform_to_char_array(message, data);
 
 		int i;
-		for(i=0;i<length;i++){
+		for(i=length-1;i>=0;i--){
 			bcm2835_uart_send(message[i]);
 		}			
 
