@@ -1,0 +1,7 @@
+# ignore all files of the build process, including the executable bin file
+
+*.o
+*.bin
+*.hex
+*.elf
+*.list
