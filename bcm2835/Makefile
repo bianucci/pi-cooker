@@ -5,7 +5,7 @@ COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding
 
 LIB = -L /opt/gnuarm/arm-none-eabi/lib/ -L/Applications/yagarto-4.7.2/lib/gcc/arm-none-eabi/4.7.2
 
-NOTMAIN = spi
+NOTMAIN = screentest
 
 gcc : $(NOTMAIN).hex $(NOTMAIN).bin
 
@@ -30,8 +30,8 @@ vectors.o : vectors.s
 bcm2835.o : bcm2835.c
 	$(ARMGNU)-gcc $(COPS) -c bcm2835.c -o bcm2835.o
 
-rpi_hd44780.0 : rpi_hd44780.c
-	$(ARMGNU)-gcc $(COPS) -c rpi_hd44780.c -o rpi_hd44780.0
+rpi_hd44780.o : rpi_hd44780.c
+	$(ARMGNU)-gcc $(COPS) -c rpi_hd44780.c -o rpi_hd44780.o
 
 bcm2835_asm.o : bcm2835_asm.S
 	$(ARMGNU)-gcc $(COPS) bcm2835_asm.S -D__ASSEMBLY__ -c -o bcm2835_asm.o
@@ -39,8 +39,8 @@ bcm2835_asm.o : bcm2835_asm.S
 $(NOTMAIN).o : $(NOTMAIN).c
 	$(ARMGNU)-gcc $(COPS) -c  $(NOTMAIN).c -o $(NOTMAIN).o
 
-$(NOTMAIN).elf : memmap vectors.o bcm2835.o bcm2835_asm.o $(NOTMAIN).o rpi_hd44780.0 custom.o
-	$(ARMGNU)-ld vectors.o custom.o bcm2835.o bcm2835_asm.o rpi_hd44780.0 $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc
+$(NOTMAIN).elf : memmap vectors.o bcm2835.o bcm2835_asm.o $(NOTMAIN).o rpi_hd44780.o custom.o
+	$(ARMGNU)-ld vectors.o custom.o bcm2835.o bcm2835_asm.o rpi_hd44780.o $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc
 	$(ARMGNU)-objdump -D $(NOTMAIN).elf > $(NOTMAIN).list
 
 $(NOTMAIN).bin : $(NOTMAIN).elf

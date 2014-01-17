@@ -33,20 +33,10 @@
 #define P_WIDE   5500  // Pulse width
 #define P_15MS   15500 // >15ms
 
-/*
- *
- */
-int HD_PINS[6] = {
-  H_RS, H_E,  H_D4,
-  H_D5, H_D6, H_D7
-};
 
-/*
- *
- */
-int HD_DATAPINS[4] = {
-  H_D4, H_D5, H_D6, H_D7
-};
+extern int HD_PINS[6];
+
+extern int HD_DATAPINS[4];
 
 /*
  * Set GPIO pins to OUTPUT

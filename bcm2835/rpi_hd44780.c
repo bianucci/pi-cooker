@@ -19,6 +19,16 @@
 #include "rpi_hd44780.h"
 
 
+
+int HD_PINS[6] = {
+	H_RS, H_E,  H_D4,
+	H_D5, H_D6, H_D7
+};
+
+int HD_DATAPINS[4] = {
+	H_D4, H_D5, H_D6, H_D7
+};
+
 int lcd_set_gpio_pins( void )
 {
   int i;
