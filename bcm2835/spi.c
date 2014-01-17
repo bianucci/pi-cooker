@@ -6,8 +6,6 @@ int shift(char* int_as_char, int length);
 int notmain(void)
 {
 	uint32_t data = 0;
-    uint32_t data1 = 0;
-    uint32_t data2 = 0;
 	uint32_t space = '-';
 
 	char message[10];
@@ -27,7 +25,16 @@ int notmain(void)
 	}
 	
 	bcm2835_uart_begin();
-    	
+    
+    
+    int temp = 0;
+    
+    uint8_t pin;
+    
+	pin = RPI_V2_GPIO_P1_07;
+    
+    bcm2835_gpio_fsel(pin, BCM2835_GPIO_FSEL_OUTP);
+    
 	while(1){
 
 		bcm2835_spi_begin();
@@ -45,17 +52,18 @@ int notmain(void)
 		data = miso[1] + ((miso[0] & 3) << 8);
 	
 		length = transform_to_char_array(message, data);
+        
+        if( (data<=(temp-50)) || ((temp+50)<=data) ){
+            temp = data;
 
-		int i;
-		for(i=length-1;i>=0;i--){
-			bcm2835_uart_send(message[i]);
+            int i;
+            for(i=length-1;i>=0;i--){
+                bcm2835_uart_send(message[i]);
+            }
+            bcm2835_uart_send(space);
         }
-
-        bcm2835_uart_send(space);
         
 		bcm2835_spi_end();
-
-		bcm2835_delayMicroseconds(1000000);
 	}
 	return 0;
 }
