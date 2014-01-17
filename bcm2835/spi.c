@@ -30,26 +30,15 @@ int notmain(void)
 
 		bcm2835_spi_transfernb(mosi, miso, 2);
 		
-		/*data1 = ((miso[0]&0x0f)<<8);
-		data2 = miso[1];
-        data = data1 + data2;*/
-		
-        
-		//data = miso[1] + ((miso[0] & 15) << 8);
+		data = miso[1] + ((miso[0] & 3) << 8);
 	
-		length = transform_to_char_array(message, miso[0]);
+		length = transform_to_char_array(message, data);
 
 		int i;
 		for(i=length-1;i>=0;i--){
 			bcm2835_uart_send(message[i]);
-		}
-        bcm2835_uart_send(space);
+            }
 
-        length = transform_to_char_array(message, miso[1]);
-        
-		for(i=length-1;i>=0;i--){
-			bcm2835_uart_send(message[i]);
-		}
         bcm2835_uart_send(space);
         
 		bcm2835_spi_end();
