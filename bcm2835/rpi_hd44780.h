@@ -1,8 +1,10 @@
+#pragma once
 #include "bcm2835.h" // http://www.open.com.au/mikem/bcm2835/index.html
 
 /*
  *
  */
+#define NULL 0
 #define CNULL_TERM (char *) NULL
 
 /*
