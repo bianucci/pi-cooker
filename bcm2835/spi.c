@@ -34,20 +34,17 @@ int notmain(void)
     
 	while(1){
 
-		
+		bcm2835_delayMicroseconds(500000);		
 		data = read_temp();
 		length = transform_to_char_array(message, data);
-        
-        if( (data<=(temp-50)) || ((temp+50)<=data) ){
-            temp = data;
-
-            int i;
-            for(i=length-1;i>=0;i--){
-                bcm2835_uart_send(message[i]);
-            }
-            bcm2835_uart_send(space);
+		lcd_clear_screen();	
+        int i;
+        for(i=length-1;i>=0;i--){
+	        bcm2835_uart_send(message[i]);
+			lcd_send_char(message[i]);
         }
-        
+        bcm2835_uart_send(space);
+  
 	}
 	return 0;
 }
