@@ -21,6 +21,9 @@ clean :
 	rm -f *.bc
 	rm -f *.clang.opt.s
 
+custom.o : custom.c
+	$(ARMGNU)-gcc $(COPS) -c custom.c -o custom.o
+
 vectors.o : vectors.s
 	$(ARMGNU)-as vectors.s -o vectors.o
 
@@ -36,8 +39,8 @@ bcm2835_asm.o : bcm2835_asm.S
 $(NOTMAIN).o : $(NOTMAIN).c
 	$(ARMGNU)-gcc $(COPS) -c  $(NOTMAIN).c -o $(NOTMAIN).o
 
-$(NOTMAIN).elf : memmap vectors.o bcm2835.o bcm2835_asm.o $(NOTMAIN).o rpi_hd44780.0
-	$(ARMGNU)-ld vectors.o bcm2835.o bcm2835_asm.o rpi_hd44780.0 $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc
+$(NOTMAIN).elf : memmap vectors.o bcm2835.o bcm2835_asm.o $(NOTMAIN).o rpi_hd44780.0 custom.o
+	$(ARMGNU)-ld vectors.o custom.o bcm2835.o bcm2835_asm.o rpi_hd44780.0 $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc
 	$(ARMGNU)-objdump -D $(NOTMAIN).elf > $(NOTMAIN).list
 
 $(NOTMAIN).bin : $(NOTMAIN).elf
