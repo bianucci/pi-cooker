@@ -9,12 +9,12 @@
  * PIN mappings for HD44780
  * http://www.open.com.au/mikem/bcm2835/group__constants.html#ga63c029bd6500167152db4e57736d0939
  */
-#define H_RS RPI_GPIO_P1_26 // CE1
-#define H_E  RPI_GPIO_P1_24 // CE0
-#define H_D4 RPI_GPIO_P1_22 // #25
-#define H_D5 RPI_GPIO_P1_18 // #24
-#define H_D6 RPI_GPIO_P1_16 // #23
-#define H_D7 RPI_GPIO_P1_12 // #18
+#define H_RS RPI_GPIO_P1_15 // 22
+#define H_E  RPI_GPIO_P1_11 // 17
+#define H_D4 RPI_GPIO_P1_22 // 25
+#define H_D5 RPI_GPIO_P1_18 // 24
+#define H_D6 RPI_GPIO_P1_16 // 23
+#define H_D7 RPI_GPIO_P1_12 // 18
 
 /*
  * Cursor addresses
