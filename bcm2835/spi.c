@@ -10,10 +10,22 @@ int notmain(void)
     uint32_t data2 = 0;
 	uint32_t space = '-';
 
-
 	char message[10];
 	int length;
 
+	bcm2835_gpio_fsel(RPI_GPIO_P1_12, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_clr(16);
+
+	lcd_init();
+
+	int penis;
+	for(penis = 0; penis <=9;penis++){
+		lcd_clear_screen();	
+		lcd_send_char(penis + 48);
+		bcm2835_delayMicroseconds(1000000);
+
+	}
+	
 	bcm2835_uart_begin();
     	
 	while(1){
@@ -37,7 +49,7 @@ int notmain(void)
 		int i;
 		for(i=length-1;i>=0;i--){
 			bcm2835_uart_send(message[i]);
-            }
+        }
 
         bcm2835_uart_send(space);
         
@@ -47,6 +59,7 @@ int notmain(void)
 	}
 	return 0;
 }
+
 
 int shift(char* int_as_char, int length){
     int i;
