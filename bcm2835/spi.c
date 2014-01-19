@@ -1,5 +1,6 @@
 #include "bcm2835.h"
 #include "temp_lcd.h"
+#include "mcp3202.h"
 
 int notmain(void)
 {
@@ -37,7 +38,7 @@ int notmain(void)
 	while(1){
 
 		bcm2835_delayMicroseconds(500000);		
-		data = read_temp();
+		data = mcp_3202_read_data();
 		length = transform_to_char_array(message, data);
 		lcd_clear_screen();	
         int i;

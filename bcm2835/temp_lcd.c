@@ -50,7 +50,7 @@ void lcd_rotate(){
     }
 }
 
-int notmain(void){
+/*int notmain(void){
 	lcd_init_temps();
 	bcm2835_delayMicroseconds(ONE_SECOND);
 	lcd_update_temps(34, 80);
@@ -60,4 +60,4 @@ int notmain(void){
 		bcm2835_delayMicroseconds(ONE_SECOND);	
 	}
 	return 0;
-}
+}*/
