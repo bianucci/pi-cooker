@@ -1,7 +1,9 @@
 #include "bcm2835.h"
+#include "temp_lcd.h"
 
 int notmain(void)
 {
+
 	uint32_t data = 0;
 	uint32_t space = '-';
 

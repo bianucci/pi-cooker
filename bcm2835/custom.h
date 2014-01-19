@@ -1,3 +1,5 @@
+#define ONE_SECOND 1000000
+
 int transform_to_char_array(char *int_as_char, int i);
 
 int shift(char* int_as_char, int length);
