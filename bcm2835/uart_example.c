@@ -1,4 +1,6 @@
+#include "custom.h"
 #include "bcm2835.h"
+#include "temp_lcd.h"
 
 int notmain(void){
 
@@ -14,6 +16,8 @@ int notmain(void){
 	
 		bcm2835_uart_send(data);
 		data++;
+		bcm2835_delayMicroseconds(ONE_SECOND);
+
 
 	}
 

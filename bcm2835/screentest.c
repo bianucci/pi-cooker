@@ -1,3 +1,4 @@
+#include "temp_lcd.h"
 #include "rpi_hd44780.h"
 #include "bcm2835.h"
 #include "custom.h"
