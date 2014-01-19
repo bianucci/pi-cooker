@@ -4,41 +4,66 @@
 
 #define	TEMPERATURE_USER	0
 #define	TEMPERATURE_CURR	1
+#define BUTTON_PRESSED		1
+#define BUTTON_RELEASED		0
+#define BUTTON_PIN		RPI_GPIO_P1_13 // breakout board gpio 21
 
 void lcd_print_temperature(int, int);
 void raw_temp_convert(char*, char*);
-
-int temp_as_int;
-//uint8_t pin_button_1;
-//uint8_t pin_button_1;
+void button_init(void);
+int button_state(void);
 
 int notmain(void){
-
-	temp_as_int = 0;
 	lcd_init();
+	button_init();
+
+	int temp = 0;
 	bcm2835_uart_begin();
+	char lock_message[6] = "locked";
 
-	//pin_button_1 = RPI_V2_GPIO_P1_07;
-	//pin_button_2 = RPI_V2_GPIO_P1_07; ////////////////////////////	
-	
-	//bcm2835_gpio_fsel(pin_button_1, BCM2835_GPIO_FSEL_INPT);
-	//bcm2835_gpio_fsel(pin_button_2, BCM2835_GPIO_FSEL_INPT);
+	while(1){
+		//int i=0;
+		//i = button_state();
+		//bcm2835_uart_send(i+48);
+		
+		if(button_state() == BUTTON_PRESSED){
+			temp++;	
+			lcd_print_temperature(temp, TEMPERATURE_USER);
+			bcm2835_uart_send(BUTTON_PRESSED+48);
 
-	//  with a pullup
-	//bcm2835_gpio_set_pud(PIN, BCM2835_GPIO_PUD_UP);
+			int counter = 0;
+			while(counter<30){
+				if(button_state() == BUTTON_PRESSED){
+					counter=0;
+					temp++;
+					lcd_print_temperature(temp, TEMPERATURE_USER);
+					bcm2835_uart_send(BUTTON_PRESSED+48);
+				}else{
+					counter++;
+				}
+			}
+				
+		}
+		uart_send_string(lock_message);
+		
+		//some complex stuff
+		bcm2835_delayMicroseconds(5000000);
 
-	//but = bcm2835_gpio_lev(pin);
-
-	
-	int i;
-
-	for(i=0;i<=1234;i++){
-		lcd_print_temperature(i, TEMPERATURE_USER);
-		lcd_print_temperature(i, TEMPERATURE_CURR);
-		bcm2835_delayMicroseconds(150000);
+		
 	}
-
 	return 0;
+}
+
+void button_init(){
+	bcm2835_gpio_fsel(BUTTON_PIN, BCM2835_GPIO_FSEL_INPT);
+	bcm2835_gpio_set_pud(BUTTON_PIN, BCM2835_GPIO_PUD_DOWN);	
+}
+
+int button_state(){
+	int button_1_value;
+	button_1_value = bcm2835_gpio_lev(BUTTON_PIN);
+	bcm2835_delayMicroseconds(100000);
+	return button_1_value;
 }
 
 void lcd_print_temperature(int temp_as_int, int type){
