@@ -1,19 +1,28 @@
 #include "temp_lcd.h"
 #include "rpi_hd44780.h"
 #include "custom.h"
+#include "relay.h"
 
 int current_rotation = 0;
 
 void lcd_update_temps(int temp_current, int temp_user){
 	lcd_update_temp(temp_current,LINE2_START);
-	lcd_update_temp(temp_user,LINE2_START+12);
+	lcd_update_temp(temp_user,LINE2_START+11);
 }
 
 void lcd_update_temp(int temp, unsigned char cursor){
-	char temp_raw_string[4];
+	char temp_raw_string[4] = "0000";
+	char temp_with_floating_point[5];
 	transform_to_char_array(temp_raw_string, temp);
+	temp_with_floating_point[0] = temp_raw_string[3];
+	temp_with_floating_point[1] = temp_raw_string[2];
+	temp_with_floating_point[2] = temp_raw_string[1];
+	temp_with_floating_point[3] = '.';
+	temp_with_floating_point[4] = temp_raw_string[0];
 	lcd_set_cursor(cursor);
-	lcd_send_string(temp_raw_string);	
+	sleep(1000);
+	lcd_send_string(temp_with_floating_point);	
+	sleep(1000);
 }
 
 void lcd_init_temps(){
@@ -21,18 +30,24 @@ void lcd_init_temps(){
 	lcd_init();
 	lcd_clear_screen();
 	// Assign variables for header and values
-	char header[16] = "HAVE   ##   WANT";
+	char header[16] = "CURR   ##   USER";
 	char values[16] = "000.0  ##  000.0";
 	// Send header and values to display using cursor
 	lcd_set_cursor(LINE1_START);		
+	sleep(1000);
 	lcd_send_string(header);
 	lcd_set_cursor(LINE2_START);
+	sleep(1000);
 	lcd_send_string(values);
+	sleep(1000);
 }
 
-void lcd_rotate(){
+void lcd_rotate(States states){
 	char draw[4] = "####";
-    draw[current_rotation] = ' ';
+	bcm2835_uart_send(states.relay);
+	if (states.relay == RELAY_ON){
+    	draw[current_rotation] = ' ';		
+	}
 
     lcd_set_cursor(LINE1_START+7);
     lcd_send_char(draw[0]);
@@ -50,14 +65,11 @@ void lcd_rotate(){
     }
 }
 
-/*int notmain(void){
-	lcd_init_temps();
-	bcm2835_delayMicroseconds(ONE_SECOND);
-	lcd_update_temps(34, 80);
-	bcm2835_delayMicroseconds(ONE_SECOND);	
-	while (1){
-		lcd_rotate();
-		bcm2835_delayMicroseconds(ONE_SECOND);	
-	}
-	return 0;
-}*/
+void task_lcd_print_temperatures(States states){
+	lcd_update_temps(states.temp_current, states.temp_user);
+}
+
+void task_lcd_rotate(States states){
+	lcd_rotate(states);
+}
+

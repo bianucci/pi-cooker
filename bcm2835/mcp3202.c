@@ -1,5 +1,6 @@
 #include "mcp3202.h"
 #include "bcm2835.h"
+#include "custom.h"
 
 int mcp3202_read_data(){
 	bcm2835_spi_begin();
@@ -16,4 +17,9 @@ int mcp3202_read_data(){
 	bcm2835_spi_end();
 
 	return (miso[1] + ((miso[0] & 3) << 8));
+}
+
+void task_measure_temperature(States *states){
+	int data =  mcp3202_read_data() * 3;
+	states->temp_current = data;
 }

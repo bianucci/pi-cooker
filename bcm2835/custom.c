@@ -47,4 +47,9 @@ void send_int_to_uart(int value){
 	}
 }
 
+void sleep(int microseconds){
+	bcm2835_delayMicroseconds(microseconds);
+
+}
+
 

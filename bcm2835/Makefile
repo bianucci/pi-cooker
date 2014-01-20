@@ -5,7 +5,7 @@ COPS = -Wall -Werror -O2 -nostdlib -nostartfiles -ffreestanding
 
 LIB = -L /opt/gnuarm/arm-none-eabi/lib/ -L/Applications/yagarto-4.7.2/lib/gcc/arm-none-eabi/4.7.2
 
-NOTMAIN = bench
+NOTMAIN = scheduler
 
 gcc : $(NOTMAIN).hex $(NOTMAIN).bin
 
@@ -23,6 +23,12 @@ clean :
 
 custom.o : custom.c
 	$(ARMGNU)-gcc $(COPS) -c custom.c -o custom.o
+
+button_control.o : button_control.c
+	$(ARMGNU)-gcc $(COPS) -c button_control.c -o button_control.o
+
+relay.o : relay.c
+	$(ARMGNU)-gcc $(COPS) -c relay.c -o relay.o
 
 temp_lcd.o : temp_lcd.c
 	$(ARMGNU)-gcc $(COPS) -c temp_lcd.c -o temp_lcd.o
@@ -45,8 +51,8 @@ bcm2835_asm.o : bcm2835_asm.S
 $(NOTMAIN).o : $(NOTMAIN).c
 	$(ARMGNU)-gcc $(COPS) -c  $(NOTMAIN).c -o $(NOTMAIN).o
 
-$(NOTMAIN).elf : memmap vectors.o bcm2835.o bcm2835_asm.o mcp3202.o $(NOTMAIN).o rpi_hd44780.o custom.o temp_lcd.o
-	$(ARMGNU)-ld vectors.o mcp3202.o custom.o bcm2835.o bcm2835_asm.o temp_lcd.o rpi_hd44780.o $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc 
+$(NOTMAIN).elf : memmap vectors.o button_control.o bcm2835.o bcm2835_asm.o mcp3202.o $(NOTMAIN).o rpi_hd44780.o custom.o relay.o temp_lcd.o
+	$(ARMGNU)-ld vectors.o mcp3202.o custom.o button_control.o bcm2835.o bcm2835_asm.o temp_lcd.o rpi_hd44780.o relay.o $(NOTMAIN).o -T memmap -o $(NOTMAIN).elf $(LIB) -lc -lgcc 
 	$(ARMGNU)-objdump -D $(NOTMAIN).elf > $(NOTMAIN).list
 
 $(NOTMAIN).bin : $(NOTMAIN).elf
